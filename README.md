@@ -155,3 +155,69 @@ $ open ./schema-viz.html
 
 ![entviz1](./entviz1.png)
 
+## 2. openapiを自動生成する
+
+公式ドキュメントの(「Ent と ogen で REST CRUD APIを自動生成」)[https://entgo.io/ja/blog/2022/02/15/generate-rest-crud-with-ent-and-ogen/]の手順に従います。
+
+`ent/entc.go`ファイルを作成し、以下を記述します。
+
+```go
+//go:build ignore
+
+package main
+
+import (
+    "log"
+
+    "ariga.io/ogent"
+    "entgo.io/contrib/entoas"
+    "entgo.io/ent/entc"
+    "entgo.io/ent/entc/gen"
+    "github.com/ogen-go/ogen"
+)
+
+func main() {
+    spec := new(ogen.Spec)
+    oas, err := entoas.NewExtension(entoas.Spec(spec))
+    if err != nil {
+        log.Fatalf("creating entoas extension: %v", err)
+    }
+    ogent, err := ogent.NewExtension(spec)
+    if err != nil {
+        log.Fatalf("creating ogent extension: %v", err)
+    }
+    err = entc.Generate("./schema", &gen.Config{}, entc.Extensions(ogent, oas))
+    if err != nil {
+        log.Fatalf("running ent codegen: %v", err)
+    }
+}
+```
+
+`ent/generate.go`を編集し以下を追記します。
+
+```go
+//go:generate go run -mod=mod entc.go
+```
+
+`go generate`を実行するとopenapiが生成されます。
+
+```sh
+$ go generate ./ent
+$ cat ent/openapi.json
+```
+
+swagger-uiを利用してopenapiをビジュアライズしてみます。
+
+```sh
+$ docker run -p 8081:8080 -e SWAGGER_JSON=/openapi.json -v $(pwd)/ent/openapi.json:/openapi.json swaggerapi/swagger-ui
+```
+
+http://localhost:8081 をブラウザで開くとCRUD用APIの定義やスキーマが生成されていることがわかります。
+
+![swagger1](./swagger1.png)
+
+![swagger2](./swagger2.png)
+
+![swagger3](./swagger3.png)
+
+![swagger4](./swagger4.png)
