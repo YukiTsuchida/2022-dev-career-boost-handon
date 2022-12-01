@@ -13,6 +13,13 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
+// AddUser implements addUser operation.
+//
+// PATCH /organizations/{id}/addUser
+func (UnimplementedHandler) AddUser(ctx context.Context, params AddUserParams) (r AddUserOK, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // CreateOrganization implements createOrganization operation.
 //
 // Creates a new Organization and persists it to storage.

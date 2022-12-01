@@ -6,6 +6,9 @@ import (
 	"github.com/go-faster/jx"
 )
 
+// AddUserOK is response for AddUser operation.
+type AddUserOK struct{}
+
 type CreateOrganizationReq struct {
 	Name  string `json:"name"`
 	Users []int  `json:"users"`

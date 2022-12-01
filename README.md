@@ -221,3 +221,51 @@ http://localhost:8081 をブラウザで開くとCRUD用APIの定義やスキー
 ![swagger3](./swagger3.png)
 
 ![swagger4](./swagger4.png)
+
+## 3. エンドポイントを追加してみる
+
+`ent/entc.go`を書き換えることで生成されるopenapiに手を加えることができます。
+
+`PATCH /organizations/{id}/addUser`を追加してみましょう。
+
+`ent/entc.go`を以下のように変更してみます。
+
+```go
+...
+func main() {
+	oas, err := entoas.NewExtension(
+		entoas.Spec(spec),
+		entoas.Mutations(func(_ *gen.Graph, spec *ogen.Spec) error {
+			spec.AddPathItem("/organizations/{id}/addUser", ogen.NewPathItem().
+				SetPatch(ogen.NewOperation().
+					SetOperationID("addUser").
+					AddTags("Organization").
+					AddResponse("200", ogen.NewResponse()),
+				).
+				AddParameters(
+					ogen.NewParameter().
+						InPath().
+						SetName("id").
+						SetRequired(true).
+						SetSchema(ogen.Int()),
+					ogen.NewParameter().
+						InQuery().
+						SetName("user_id").
+						SetRequired(true).
+						SetSchema(ogen.Int()),
+				),
+			)
+			return nil
+		}),
+	)
+...
+```
+
+openapiを生成して再度結果を見てみます。
+
+```sh
+$ go generate ./ent
+$ docker run -p 8081:8080 -e SWAGGER_JSON=/openapi.json -v $(pwd)/ent/openapi.json:/openapi.json swaggerapi/swagger-ui
+```
+
+![swagger5](./swagger5.png)

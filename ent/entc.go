@@ -14,7 +14,31 @@ import (
 
 func main() {
 	spec := new(ogen.Spec)
-	oas, err := entoas.NewExtension(entoas.Spec(spec))
+	oas, err := entoas.NewExtension(
+		entoas.Spec(spec),
+		entoas.Mutations(func(_ *gen.Graph, spec *ogen.Spec) error {
+			spec.AddPathItem("/organizations/{id}/addUser", ogen.NewPathItem().
+				SetPatch(ogen.NewOperation().
+					SetOperationID("addUser").
+					AddTags("Organization").
+					AddResponse("200", ogen.NewResponse()),
+				).
+				AddParameters(
+					ogen.NewParameter().
+						InPath().
+						SetName("id").
+						SetRequired(true).
+						SetSchema(ogen.Int()),
+					ogen.NewParameter().
+						InQuery().
+						SetName("user_id").
+						SetRequired(true).
+						SetSchema(ogen.Int()),
+				),
+			)
+			return nil
+		}),
+	)
 	if err != nil {
 		log.Fatalf("creating entoas extension: %v", err)
 	}

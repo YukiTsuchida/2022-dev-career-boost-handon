@@ -261,6 +261,35 @@
         }
       }
     },
+    "/organizations/{id}/addUser": {
+      "patch": {
+        "tags": [
+          "Organization"
+        ],
+        "operationId": "addUser",
+        "responses": {
+          "200": {}
+        }
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "user_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ]
+    },
     "/organizations/{id}/users": {
       "get": {
         "tags": [
