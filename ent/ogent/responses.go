@@ -123,6 +123,8 @@ func NewOrganizationUsersList(e *ent.User) *OrganizationUsersList {
 	var ret OrganizationUsersList
 	ret.ID = e.ID
 	ret.Name = e.Name
+	ret.Age = NewOptInt(e.Age)
+	ret.Active = e.Active
 	return &ret
 }
 
@@ -151,6 +153,8 @@ func NewUserCreate(e *ent.User) *UserCreate {
 	var ret UserCreate
 	ret.ID = e.ID
 	ret.Name = e.Name
+	ret.Age = NewOptInt(e.Age)
+	ret.Active = e.Active
 	return &ret
 }
 
@@ -179,6 +183,8 @@ func NewUserList(e *ent.User) *UserList {
 	var ret UserList
 	ret.ID = e.ID
 	ret.Name = e.Name
+	ret.Age = NewOptInt(e.Age)
+	ret.Active = e.Active
 	return &ret
 }
 
@@ -207,6 +213,8 @@ func NewUserRead(e *ent.User) *UserRead {
 	var ret UserRead
 	ret.ID = e.ID
 	ret.Name = e.Name
+	ret.Age = NewOptInt(e.Age)
+	ret.Active = e.Active
 	return &ret
 }
 
@@ -235,6 +243,8 @@ func NewUserUpdate(e *ent.User) *UserUpdate {
 	var ret UserUpdate
 	ret.ID = e.ID
 	ret.Name = e.Name
+	ret.Age = NewOptInt(e.Age)
+	ret.Active = e.Active
 	return &ret
 }
 

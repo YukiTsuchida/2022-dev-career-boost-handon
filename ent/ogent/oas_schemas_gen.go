@@ -36,12 +36,24 @@ func (s *CreateOrganizationReq) SetUsers(val []int) {
 
 type CreateUserReq struct {
 	Name          string `json:"name"`
+	Age           OptInt `json:"age"`
+	Active        bool   `json:"active"`
 	Organizations []int  `json:"organizations"`
 }
 
 // GetName returns the value of Name.
 func (s CreateUserReq) GetName() string {
 	return s.Name
+}
+
+// GetAge returns the value of Age.
+func (s CreateUserReq) GetAge() OptInt {
+	return s.Age
+}
+
+// GetActive returns the value of Active.
+func (s CreateUserReq) GetActive() bool {
+	return s.Active
 }
 
 // GetOrganizations returns the value of Organizations.
@@ -52,6 +64,16 @@ func (s CreateUserReq) GetOrganizations() []int {
 // SetName sets the value of Name.
 func (s *CreateUserReq) SetName(val string) {
 	s.Name = val
+}
+
+// SetAge sets the value of Age.
+func (s *CreateUserReq) SetAge(val OptInt) {
+	s.Age = val
+}
+
+// SetActive sets the value of Active.
+func (s *CreateUserReq) SetActive(val bool) {
+	s.Active = val
 }
 
 // SetOrganizations sets the value of Organizations.
@@ -84,6 +106,52 @@ func (ListUserOKApplicationJSON) listUserRes() {}
 type ListUserOrganizationsOKApplicationJSON []UserOrganizationsList
 
 func (ListUserOrganizationsOKApplicationJSON) listUserOrganizationsRes() {}
+
+// NewOptBool returns new OptBool with value set to v.
+func NewOptBool(v bool) OptBool {
+	return OptBool{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptBool is optional bool.
+type OptBool struct {
+	Value bool
+	Set   bool
+}
+
+// IsSet returns true if OptBool was set.
+func (o OptBool) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptBool) Reset() {
+	var v bool
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptBool) SetTo(v bool) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptBool) Get() (v bool, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptBool) Or(d bool) bool {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
 
 // NewOptInt returns new OptInt with value set to v.
 func NewOptInt(v int) OptInt {
@@ -289,8 +357,10 @@ func (*OrganizationUpdate) updateOrganizationRes() {}
 
 // Ref: #/components/schemas/Organization_UsersList
 type OrganizationUsersList struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Age    OptInt `json:"age"`
+	Active bool   `json:"active"`
 }
 
 // GetID returns the value of ID.
@@ -303,6 +373,16 @@ func (s OrganizationUsersList) GetName() string {
 	return s.Name
 }
 
+// GetAge returns the value of Age.
+func (s OrganizationUsersList) GetAge() OptInt {
+	return s.Age
+}
+
+// GetActive returns the value of Active.
+func (s OrganizationUsersList) GetActive() bool {
+	return s.Active
+}
+
 // SetID sets the value of ID.
 func (s *OrganizationUsersList) SetID(val int) {
 	s.ID = val
@@ -311,6 +391,16 @@ func (s *OrganizationUsersList) SetID(val int) {
 // SetName sets the value of Name.
 func (s *OrganizationUsersList) SetName(val string) {
 	s.Name = val
+}
+
+// SetAge sets the value of Age.
+func (s *OrganizationUsersList) SetAge(val OptInt) {
+	s.Age = val
+}
+
+// SetActive sets the value of Active.
+func (s *OrganizationUsersList) SetActive(val bool) {
+	s.Active = val
 }
 
 type R400 struct {
@@ -534,12 +624,24 @@ func (s *UpdateOrganizationReq) SetUsers(val []int) {
 
 type UpdateUserReq struct {
 	Name          OptString `json:"name"`
+	Age           OptInt    `json:"age"`
+	Active        OptBool   `json:"active"`
 	Organizations []int     `json:"organizations"`
 }
 
 // GetName returns the value of Name.
 func (s UpdateUserReq) GetName() OptString {
 	return s.Name
+}
+
+// GetAge returns the value of Age.
+func (s UpdateUserReq) GetAge() OptInt {
+	return s.Age
+}
+
+// GetActive returns the value of Active.
+func (s UpdateUserReq) GetActive() OptBool {
+	return s.Active
 }
 
 // GetOrganizations returns the value of Organizations.
@@ -552,6 +654,16 @@ func (s *UpdateUserReq) SetName(val OptString) {
 	s.Name = val
 }
 
+// SetAge sets the value of Age.
+func (s *UpdateUserReq) SetAge(val OptInt) {
+	s.Age = val
+}
+
+// SetActive sets the value of Active.
+func (s *UpdateUserReq) SetActive(val OptBool) {
+	s.Active = val
+}
+
 // SetOrganizations sets the value of Organizations.
 func (s *UpdateUserReq) SetOrganizations(val []int) {
 	s.Organizations = val
@@ -559,8 +671,10 @@ func (s *UpdateUserReq) SetOrganizations(val []int) {
 
 // Ref: #/components/schemas/UserCreate
 type UserCreate struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Age    OptInt `json:"age"`
+	Active bool   `json:"active"`
 }
 
 // GetID returns the value of ID.
@@ -573,6 +687,16 @@ func (s UserCreate) GetName() string {
 	return s.Name
 }
 
+// GetAge returns the value of Age.
+func (s UserCreate) GetAge() OptInt {
+	return s.Age
+}
+
+// GetActive returns the value of Active.
+func (s UserCreate) GetActive() bool {
+	return s.Active
+}
+
 // SetID sets the value of ID.
 func (s *UserCreate) SetID(val int) {
 	s.ID = val
@@ -583,12 +707,24 @@ func (s *UserCreate) SetName(val string) {
 	s.Name = val
 }
 
+// SetAge sets the value of Age.
+func (s *UserCreate) SetAge(val OptInt) {
+	s.Age = val
+}
+
+// SetActive sets the value of Active.
+func (s *UserCreate) SetActive(val bool) {
+	s.Active = val
+}
+
 func (*UserCreate) createUserRes() {}
 
 // Ref: #/components/schemas/UserList
 type UserList struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Age    OptInt `json:"age"`
+	Active bool   `json:"active"`
 }
 
 // GetID returns the value of ID.
@@ -601,6 +737,16 @@ func (s UserList) GetName() string {
 	return s.Name
 }
 
+// GetAge returns the value of Age.
+func (s UserList) GetAge() OptInt {
+	return s.Age
+}
+
+// GetActive returns the value of Active.
+func (s UserList) GetActive() bool {
+	return s.Active
+}
+
 // SetID sets the value of ID.
 func (s *UserList) SetID(val int) {
 	s.ID = val
@@ -609,6 +755,16 @@ func (s *UserList) SetID(val int) {
 // SetName sets the value of Name.
 func (s *UserList) SetName(val string) {
 	s.Name = val
+}
+
+// SetAge sets the value of Age.
+func (s *UserList) SetAge(val OptInt) {
+	s.Age = val
+}
+
+// SetActive sets the value of Active.
+func (s *UserList) SetActive(val bool) {
+	s.Active = val
 }
 
 // Ref: #/components/schemas/User_OrganizationsList
@@ -639,8 +795,10 @@ func (s *UserOrganizationsList) SetName(val string) {
 
 // Ref: #/components/schemas/UserRead
 type UserRead struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Age    OptInt `json:"age"`
+	Active bool   `json:"active"`
 }
 
 // GetID returns the value of ID.
@@ -653,6 +811,16 @@ func (s UserRead) GetName() string {
 	return s.Name
 }
 
+// GetAge returns the value of Age.
+func (s UserRead) GetAge() OptInt {
+	return s.Age
+}
+
+// GetActive returns the value of Active.
+func (s UserRead) GetActive() bool {
+	return s.Active
+}
+
 // SetID sets the value of ID.
 func (s *UserRead) SetID(val int) {
 	s.ID = val
@@ -663,12 +831,24 @@ func (s *UserRead) SetName(val string) {
 	s.Name = val
 }
 
+// SetAge sets the value of Age.
+func (s *UserRead) SetAge(val OptInt) {
+	s.Age = val
+}
+
+// SetActive sets the value of Active.
+func (s *UserRead) SetActive(val bool) {
+	s.Active = val
+}
+
 func (*UserRead) readUserRes() {}
 
 // Ref: #/components/schemas/UserUpdate
 type UserUpdate struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Age    OptInt `json:"age"`
+	Active bool   `json:"active"`
 }
 
 // GetID returns the value of ID.
@@ -681,6 +861,16 @@ func (s UserUpdate) GetName() string {
 	return s.Name
 }
 
+// GetAge returns the value of Age.
+func (s UserUpdate) GetAge() OptInt {
+	return s.Age
+}
+
+// GetActive returns the value of Active.
+func (s UserUpdate) GetActive() bool {
+	return s.Active
+}
+
 // SetID sets the value of ID.
 func (s *UserUpdate) SetID(val int) {
 	s.ID = val
@@ -689,6 +879,16 @@ func (s *UserUpdate) SetID(val int) {
 // SetName sets the value of Name.
 func (s *UserUpdate) SetName(val string) {
 	s.Name = val
+}
+
+// SetAge sets the value of Age.
+func (s *UserUpdate) SetAge(val OptInt) {
+	s.Age = val
+}
+
+// SetActive sets the value of Active.
+func (s *UserUpdate) SetActive(val bool) {
+	s.Active = val
 }
 
 func (*UserUpdate) updateUserRes() {}

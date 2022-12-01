@@ -425,6 +425,12 @@
                   "name": {
                     "type": "string"
                   },
+                  "age": {
+                    "type": "integer"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  },
                   "organizations": {
                     "type": "array",
                     "items": {
@@ -434,6 +440,7 @@
                 },
                 "required": [
                   "name",
+                  "active",
                   "organizations"
                 ]
               }
@@ -571,6 +578,12 @@
                 "properties": {
                   "name": {
                     "type": "string"
+                  },
+                  "age": {
+                    "type": "integer"
+                  },
+                  "active": {
+                    "type": "boolean"
                   },
                   "organizations": {
                     "type": "array",
@@ -766,11 +779,18 @@
           },
           "name": {
             "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "active": {
+            "type": "boolean"
           }
         },
         "required": [
           "id",
-          "name"
+          "name",
+          "active"
         ]
       },
       "User": {
@@ -782,6 +802,12 @@
           "name": {
             "type": "string"
           },
+          "age": {
+            "type": "integer"
+          },
+          "active": {
+            "type": "boolean"
+          },
           "organizations": {
             "type": "array",
             "items": {
@@ -792,6 +818,7 @@
         "required": [
           "id",
           "name",
+          "active",
           "organizations"
         ]
       },
@@ -803,11 +830,18 @@
           },
           "name": {
             "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "active": {
+            "type": "boolean"
           }
         },
         "required": [
           "id",
-          "name"
+          "name",
+          "active"
         ]
       },
       "UserList": {
@@ -818,11 +852,18 @@
           },
           "name": {
             "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "active": {
+            "type": "boolean"
           }
         },
         "required": [
           "id",
-          "name"
+          "name",
+          "active"
         ]
       },
       "UserRead": {
@@ -833,11 +874,18 @@
           },
           "name": {
             "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "active": {
+            "type": "boolean"
           }
         },
         "required": [
           "id",
-          "name"
+          "name",
+          "active"
         ]
       },
       "UserUpdate": {
@@ -848,11 +896,18 @@
           },
           "name": {
             "type": "string"
+          },
+          "age": {
+            "type": "integer"
+          },
+          "active": {
+            "type": "boolean"
           }
         },
         "required": [
           "id",
-          "name"
+          "name",
+          "active"
         ]
       },
       "User_OrganizationsList": {

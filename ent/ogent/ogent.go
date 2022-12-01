@@ -236,6 +236,10 @@ func (h *OgentHandler) CreateUser(ctx context.Context, req CreateUserReq) (Creat
 	b := h.client.User.Create()
 	// Add all fields.
 	b.SetName(req.Name)
+	if v, ok := req.Age.Get(); ok {
+		b.SetAge(v)
+	}
+	b.SetActive(req.Active)
 	// Add all edges.
 	b.AddOrganizationIDs(req.Organizations...)
 	// Persist to storage.
@@ -301,6 +305,12 @@ func (h *OgentHandler) UpdateUser(ctx context.Context, req UpdateUserReq, params
 	// Add all fields.
 	if v, ok := req.Name.Get(); ok {
 		b.SetName(v)
+	}
+	if v, ok := req.Age.Get(); ok {
+		b.SetAge(v)
+	}
+	if v, ok := req.Active.Get(); ok {
+		b.SetActive(v)
 	}
 	// Add all edges.
 	b.ClearOrganizations().AddOrganizationIDs(req.Organizations...)

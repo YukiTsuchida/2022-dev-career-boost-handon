@@ -9,6 +9,10 @@ const (
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldAge holds the string denoting the age field in the database.
+	FieldAge = "age"
+	// FieldActive holds the string denoting the active field in the database.
+	FieldActive = "active"
 	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
 	EdgeOrganizations = "organizations"
 	// Table holds the table name of the user in the database.
@@ -24,6 +28,8 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldName,
+	FieldAge,
+	FieldActive,
 }
 
 var (
@@ -45,4 +51,8 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultName holds the default value on creation for the "name" field.
 	DefaultName string
+	// AgeValidator is a validator for the "age" field. It is called by the builders before save.
+	AgeValidator func(int) error
+	// DefaultActive holds the default value on creation for the "active" field.
+	DefaultActive bool
 )

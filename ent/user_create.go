@@ -34,6 +34,34 @@ func (uc *UserCreate) SetNillableName(s *string) *UserCreate {
 	return uc
 }
 
+// SetAge sets the "age" field.
+func (uc *UserCreate) SetAge(i int) *UserCreate {
+	uc.mutation.SetAge(i)
+	return uc
+}
+
+// SetNillableAge sets the "age" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAge(i *int) *UserCreate {
+	if i != nil {
+		uc.SetAge(*i)
+	}
+	return uc
+}
+
+// SetActive sets the "active" field.
+func (uc *UserCreate) SetActive(b bool) *UserCreate {
+	uc.mutation.SetActive(b)
+	return uc
+}
+
+// SetNillableActive sets the "active" field if the given value is not nil.
+func (uc *UserCreate) SetNillableActive(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetActive(*b)
+	}
+	return uc
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
 func (uc *UserCreate) AddOrganizationIDs(ids ...int) *UserCreate {
 	uc.mutation.AddOrganizationIDs(ids...)
@@ -130,12 +158,24 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultName
 		uc.mutation.SetName(v)
 	}
+	if _, ok := uc.mutation.Active(); !ok {
+		v := user.DefaultActive
+		uc.mutation.SetActive(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "User.name"`)}
+	}
+	if v, ok := uc.mutation.Age(); ok {
+		if err := user.AgeValidator(v); err != nil {
+			return &ValidationError{Name: "age", err: fmt.Errorf(`ent: validator failed for field "User.age": %w`, err)}
+		}
+	}
+	if _, ok := uc.mutation.Active(); !ok {
+		return &ValidationError{Name: "active", err: errors.New(`ent: missing required field "User.active"`)}
 	}
 	if len(uc.mutation.OrganizationsIDs()) == 0 {
 		return &ValidationError{Name: "organizations", err: errors.New(`ent: missing required edge "User.organizations"`)}
@@ -170,6 +210,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := uc.mutation.Age(); ok {
+		_spec.SetField(user.FieldAge, field.TypeInt, value)
+		_node.Age = value
+	}
+	if value, ok := uc.mutation.Active(); ok {
+		_spec.SetField(user.FieldActive, field.TypeBool, value)
+		_node.Active = value
 	}
 	if nodes := uc.mutation.OrganizationsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

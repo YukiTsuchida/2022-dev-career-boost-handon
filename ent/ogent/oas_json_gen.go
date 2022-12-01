@@ -154,6 +154,17 @@ func (s CreateUserReq) encodeFields(e *jx.Encoder) {
 		e.Str(s.Name)
 	}
 	{
+		if s.Age.Set {
+			e.FieldStart("age")
+			s.Age.Encode(e)
+		}
+	}
+	{
+
+		e.FieldStart("active")
+		e.Bool(s.Active)
+	}
+	{
 
 		e.FieldStart("organizations")
 		e.ArrStart()
@@ -164,9 +175,11 @@ func (s CreateUserReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateUserReq = [2]string{
+var jsonFieldsNameOfCreateUserReq = [4]string{
 	0: "name",
-	1: "organizations",
+	1: "age",
+	2: "active",
+	3: "organizations",
 }
 
 // Decode decodes CreateUserReq from json.
@@ -190,8 +203,30 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
+		case "age":
+			if err := func() error {
+				s.Age.Reset()
+				if err := s.Age.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"age\"")
+			}
+		case "active":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Bool()
+				s.Active = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"active\"")
+			}
 		case "organizations":
-			requiredBitSet[0] |= 1 << 1
+			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				s.Organizations = make([]int, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
@@ -220,7 +255,7 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00001101,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -462,6 +497,76 @@ func (s ListUserOrganizationsOKApplicationJSON) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *ListUserOrganizationsOKApplicationJSON) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes bool as json.
+func (o OptBool) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Bool(bool(o.Value))
+}
+
+// Decode decodes bool from json.
+func (o *OptBool) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptBool to nil")
+	}
+	o.Set = true
+	v, err := d.Bool()
+	if err != nil {
+		return err
+	}
+	o.Value = bool(v)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptBool) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptBool) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes int as json.
+func (o OptInt) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Int(int(o.Value))
+}
+
+// Decode decodes int from json.
+func (o *OptInt) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptInt to nil")
+	}
+	o.Set = true
+	v, err := d.Int()
+	if err != nil {
+		return err
+	}
+	o.Value = int(v)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptInt) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptInt) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -980,11 +1085,24 @@ func (s OrganizationUsersList) encodeFields(e *jx.Encoder) {
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
+	{
+		if s.Age.Set {
+			e.FieldStart("age")
+			s.Age.Encode(e)
+		}
+	}
+	{
+
+		e.FieldStart("active")
+		e.Bool(s.Active)
+	}
 }
 
-var jsonFieldsNameOfOrganizationUsersList = [2]string{
+var jsonFieldsNameOfOrganizationUsersList = [4]string{
 	0: "id",
 	1: "name",
+	2: "age",
+	3: "active",
 }
 
 // Decode decodes OrganizationUsersList from json.
@@ -1020,6 +1138,28 @@ func (s *OrganizationUsersList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
+		case "age":
+			if err := func() error {
+				s.Age.Reset()
+				if err := s.Age.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"age\"")
+			}
+		case "active":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Bool()
+				s.Active = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"active\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -1030,7 +1170,7 @@ func (s *OrganizationUsersList) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00001011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1721,6 +1861,18 @@ func (s UpdateUserReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Age.Set {
+			e.FieldStart("age")
+			s.Age.Encode(e)
+		}
+	}
+	{
+		if s.Active.Set {
+			e.FieldStart("active")
+			s.Active.Encode(e)
+		}
+	}
+	{
 		if s.Organizations != nil {
 			e.FieldStart("organizations")
 			e.ArrStart()
@@ -1732,9 +1884,11 @@ func (s UpdateUserReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUpdateUserReq = [2]string{
+var jsonFieldsNameOfUpdateUserReq = [4]string{
 	0: "name",
-	1: "organizations",
+	1: "age",
+	2: "active",
+	3: "organizations",
 }
 
 // Decode decodes UpdateUserReq from json.
@@ -1754,6 +1908,26 @@ func (s *UpdateUserReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "age":
+			if err := func() error {
+				s.Age.Reset()
+				if err := s.Age.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"age\"")
+			}
+		case "active":
+			if err := func() error {
+				s.Active.Reset()
+				if err := s.Active.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"active\"")
 			}
 		case "organizations":
 			if err := func() error {
@@ -1817,11 +1991,24 @@ func (s UserCreate) encodeFields(e *jx.Encoder) {
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
+	{
+		if s.Age.Set {
+			e.FieldStart("age")
+			s.Age.Encode(e)
+		}
+	}
+	{
+
+		e.FieldStart("active")
+		e.Bool(s.Active)
+	}
 }
 
-var jsonFieldsNameOfUserCreate = [2]string{
+var jsonFieldsNameOfUserCreate = [4]string{
 	0: "id",
 	1: "name",
+	2: "age",
+	3: "active",
 }
 
 // Decode decodes UserCreate from json.
@@ -1857,6 +2044,28 @@ func (s *UserCreate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
+		case "age":
+			if err := func() error {
+				s.Age.Reset()
+				if err := s.Age.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"age\"")
+			}
+		case "active":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Bool()
+				s.Active = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"active\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -1867,7 +2076,7 @@ func (s *UserCreate) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00001011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1932,11 +2141,24 @@ func (s UserList) encodeFields(e *jx.Encoder) {
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
+	{
+		if s.Age.Set {
+			e.FieldStart("age")
+			s.Age.Encode(e)
+		}
+	}
+	{
+
+		e.FieldStart("active")
+		e.Bool(s.Active)
+	}
 }
 
-var jsonFieldsNameOfUserList = [2]string{
+var jsonFieldsNameOfUserList = [4]string{
 	0: "id",
 	1: "name",
+	2: "age",
+	3: "active",
 }
 
 // Decode decodes UserList from json.
@@ -1972,6 +2194,28 @@ func (s *UserList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
+		case "age":
+			if err := func() error {
+				s.Age.Reset()
+				if err := s.Age.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"age\"")
+			}
+		case "active":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Bool()
+				s.Active = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"active\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -1982,7 +2226,7 @@ func (s *UserList) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00001011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2162,11 +2406,24 @@ func (s UserRead) encodeFields(e *jx.Encoder) {
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
+	{
+		if s.Age.Set {
+			e.FieldStart("age")
+			s.Age.Encode(e)
+		}
+	}
+	{
+
+		e.FieldStart("active")
+		e.Bool(s.Active)
+	}
 }
 
-var jsonFieldsNameOfUserRead = [2]string{
+var jsonFieldsNameOfUserRead = [4]string{
 	0: "id",
 	1: "name",
+	2: "age",
+	3: "active",
 }
 
 // Decode decodes UserRead from json.
@@ -2202,6 +2459,28 @@ func (s *UserRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
+		case "age":
+			if err := func() error {
+				s.Age.Reset()
+				if err := s.Age.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"age\"")
+			}
+		case "active":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Bool()
+				s.Active = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"active\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -2212,7 +2491,7 @@ func (s *UserRead) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00001011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2277,11 +2556,24 @@ func (s UserUpdate) encodeFields(e *jx.Encoder) {
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
+	{
+		if s.Age.Set {
+			e.FieldStart("age")
+			s.Age.Encode(e)
+		}
+	}
+	{
+
+		e.FieldStart("active")
+		e.Bool(s.Active)
+	}
 }
 
-var jsonFieldsNameOfUserUpdate = [2]string{
+var jsonFieldsNameOfUserUpdate = [4]string{
 	0: "id",
 	1: "name",
+	2: "age",
+	3: "active",
 }
 
 // Decode decodes UserUpdate from json.
@@ -2317,6 +2609,28 @@ func (s *UserUpdate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
+		case "age":
+			if err := func() error {
+				s.Age.Reset()
+				if err := s.Age.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"age\"")
+			}
+		case "active":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Bool()
+				s.Active = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"active\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -2327,7 +2641,7 @@ func (s *UserUpdate) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00001011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

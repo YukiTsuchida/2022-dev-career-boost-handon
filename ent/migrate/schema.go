@@ -23,6 +23,8 @@ var (
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString, Default: "unknown"},
+		{Name: "age", Type: field.TypeInt, Nullable: true},
+		{Name: "active", Type: field.TypeBool, Default: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
