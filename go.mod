@@ -29,6 +29,7 @@ require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
+	github.com/lib/pq v1.10.7 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
