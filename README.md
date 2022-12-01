@@ -494,3 +494,141 @@ Referenced by:
 
 狙い通りテーブルにColumnが追加されています。
 
+## 6. 生成されたORMを使う
+
+`go generate ./ent`で生成されたアセットにはgo言語で利用可能なエンティティオブジェクト(いわゆるORM)が含まれています。
+
+生のSQLを書かずに直感的なコードでDBにクエリできるのでgoでバックエンドAPIを実装する場合は使うと良いでしょう。(※注意: ORMを利用するとアプリケーションがentにロックインしてしまうのでプロダクションで使うべきかどうかの判断は難しい)
+
+`main_test.go`を作成して、ORMを利用するいくつかの関数を実装してみましょう。
+
+```go
+func prepareClient() *ent.Client {
+	client, err := ent.Open("postgres", "postgresql://admin:admin@localhost:5432/db?sslmode=disable")
+	if err != nil {
+		log.Fatalf("creating client: %v", err)
+	}
+	return client
+}
+
+func CreateUser(ctx context.Context, client *ent.Client, name string, age int, active bool, organization *ent.Organization) (*ent.User, error) {
+	user, err := client.User.
+		Create().
+		SetAge(age).
+		SetName(name).
+		SetActive(active).
+		AddOrganizations(organization).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed creating user: %w", err)
+	}
+	return user, nil
+}
+
+func CreateOrganization(ctx context.Context, client *ent.Client, name string) (*ent.Organization, error) {
+	organization, err := client.Organization.
+		Create().
+		SetName(name).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed creating organization: %w", err)
+	}
+	return organization, nil
+}
+```
+
+これらの関数を使ってOrganizationとUserを作成して紐付けたあと、検索して正しい結果が得られること、レコードを削除できることを確認してみます。
+
+```go
+func Test_Organizationとそれに紐づくUserの追加検索削除ができる(t *testing.T) {
+	cli := prepareClient()
+	defer cli.Close()
+
+	ctx := context.Background()
+
+	org, err := CreateOrganization(ctx, cli, "PLAID")
+	assert.Nil(t, err)
+	assert.Equal(t, org.Name, "PLAID")
+
+	user, err := CreateUser(ctx, cli, "YukiTsuchida", 26, true, org)
+	assert.Nil(t, err)
+	assert.Equal(t, user.Name, "YukiTsuchida")
+	assert.Equal(t, user.Age, 26)
+	assert.Equal(t, user.Active, true)
+
+	users, err := org.QueryUsers().All(ctx)
+	assert.Nil(t, err)
+	assert.Equal(t, len(users), 1)
+	assert.Equal(t, users[0].Name, "YukiTsuchida")
+
+	orgs, err := user.QueryOrganizations().All(ctx)
+	assert.Nil(t, err)
+	assert.Equal(t, len(orgs), 1)
+	assert.Equal(t, orgs[0].Name, "PLAID")
+
+	err = cli.User.DeleteOne(user).Exec(ctx)
+	assert.Nil(t, err)
+
+	err = cli.Organization.DeleteOne(org).Exec(ctx)
+	assert.Nil(t, err)
+}
+```
+
+testを実行します。
+
+```sh
+$ go test -v
+=== RUN   Test_Organizationとそれに紐づくUserの追加検索削除ができる
+--- PASS: Test_Organizationとそれに紐づくUserの追加検索削除ができる (0.02s)
+PASS
+ok      2022-dev-career-boost-handon    0.976s
+```
+
+次にvalidationが機能することを確認します。
+
+Userの`age`に負の数を入れられないことと、Organizationに紐づけられていないUserが作成できないことを確認してみます。
+
+```go
+func Test_Userのageが負の場合にエラーが起きる(t *testing.T) {
+	cli := prepareClient()
+	defer cli.Close()
+
+	ctx := context.Background()
+
+	org, err := CreateOrganization(ctx, cli, "PLAID")
+	assert.Nil(t, err)
+	assert.Equal(t, org.Name, "PLAID")
+
+	_, err = CreateUser(ctx, cli, "YukiTsuchida", -100, true, org)
+	assert.EqualError(t, err, "failed creating user: ent: validator failed for field \"User.age\": value out of range")
+}
+
+func Test_UserがOrganizationに紐づけられていない場合にエラーが起きる(t *testing.T) {
+	cli := prepareClient()
+	defer cli.Close()
+
+	ctx := context.Background()
+
+	_, err := cli.User.
+		Create().
+		SetAge(26).
+		SetName("YukiTsuchida").
+		SetActive(true).
+		Save(ctx)
+	assert.EqualError(t, err, "ent: missing required edge \"User.organizations\"")
+}
+```
+
+テストを実行します。
+
+```sh
+$ go test -v
+=== RUN   Test_Organizationとそれに紐づくUserの追加検索削除ができる
+--- PASS: Test_Organizationとそれに紐づくUserの追加検索削除ができる (0.02s)
+=== RUN   Test_Userのageが負の場合にエラーが起きる
+--- PASS: Test_Userのageが負の場合にエラーが起きる (0.01s)
+=== RUN   Test_UserがOrganizationに紐づけられていない場合にエラーが起きる
+--- PASS: Test_UserがOrganizationに紐づけられていない場合にエラーが起きる (0.00s)
+PASS
+ok      2022-dev-career-boost-handon    0.686s
+```
